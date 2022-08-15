@@ -25,6 +25,7 @@
 <script lang="ts">
 import {
     actionSheetController,
+    toastController,
     IonPage,
     IonHeader,
     IonFab,
@@ -63,6 +64,14 @@ export default defineComponent({
     setup() {
         const { photos, takePhoto, deletePhoto } = usePhotoGallery();
 
+        const openToast = async () => {
+            const toast = await toastController.create({
+                message: 'Photo has been deleted',
+                duration: 2500,
+            });
+            return toast.present();
+        };
+
         const showActionSheet = async (photo: UserPhoto) => {
             const actionSheet = await actionSheetController.create({
                 header: 'Photos',
@@ -71,8 +80,9 @@ export default defineComponent({
                         text: 'Delete',
                         role: 'destructive',
                         icon: trash,
-                        handler: () => {
-                            deletePhoto(photo);
+                        handler: async () => {
+                            await deletePhoto(photo);
+                            await openToast();
                         },
                     },
                     {
